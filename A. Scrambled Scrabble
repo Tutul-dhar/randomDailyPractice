@@ -1,0 +1,166 @@
+Link: https://codeforces.com/contest/2045/problem/A
+#include<bits/stdc++.h>
+#include<iostream>
+#include<set>
+#include<map>
+#include<iterator>
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+
+///Defines.....
+#define ll              long long
+#define pb              push_back
+#define RIP(i,n)        for(ll i=0; i<n; i++)
+#define PI              acos(-1)
+#define nl              '\n'
+
+
+using namespace std;
+using namespace __gnu_pbds;
+typedef tree<ll, null_type, less<ll>, rb_tree_tag,tree_order_statistics_node_update> ordered_set;
+
+
+///Constants........
+const ll mod = 1e9+7;
+//const int mod = 998244353;
+const int N = 1e5 + 5;
+const ll Max = 1e5+5;
+const ll inf = 1e18+5;
+
+
+///Chess moves.........
+ int dx[] = {+0, +0, -1, +1}; ///Up-down, Left-Right
+ int dy[] = {+1, -1, +0, +0};
+// int dx[] = {+0,+0,+1,-1,-1,+1,-1,+1}; ///King's Move
+//int dy[] = {-1,+1,+0,+0,+1,+1,-1,-1};
+// int dx[] = {-2, -2, -1, -1,  1,  1,  2,  2}; ///Knight's Move
+// int dy[] = {-1,  1, -2,  2, -2,  2, -1,  1};
+
+inline void norm(ll &a) {a%=mod; (a<0) && (a+=mod) ;}
+inline ll modAdd(ll a,ll b) {a%=mod, b%=mod; norm(a),norm(b); return (a+b)%mod;}
+inline ll modSub(ll a,ll b) {a%=mod, b%=mod; norm(a),norm(b); return (a-b)%mod;}
+inline ll modMul(ll a,ll b) {a%=mod, b%=mod; norm(a),norm(b); return (a*b)%mod;}
+inline ll modpow(ll a,ll p) {ll ans=1;while(p){if(p%2)ans=(ans*a)%mod;a=(a*a)%mod;p/=2;} return ans;}
+
+///Functions..........
+ll bigmod(ll a, ll p, ll M)
+{
+    p %= (M-1);
+    ll result = 1LL;
+    while(p>0LL){
+        if((p&1LL)) result = (result * a) % M;
+        a = (a * a) % M;
+        p>>=1LL;
+
+    }
+    return result;
+}
+
+ll gcd(ll a, ll b){ while (b){ a %= b; swap(a, b);} return a;}
+ll lcm(ll a,ll b){ return (a/gcd(a, b)*b);}
+
+ll inverse(ll a, ll M){
+    return bigmod(a, M-2, M) % M;
+}
+ll ncr(ll a, ll b){ ll x = max(a-b, b), ans=1; for(ll K=a, L=1; K>=x+1; K--, L++){ ans = ans * K % mod; ans = ans * inverse(L, mod) % mod;} return ans;}
+ll ncrwithk(ll n,ll k){if(k>n-k) k=n-k;ll p=1,pp=1;if(k!=0){while(k){p*=n;pp*=k;ll m=__gcd(p,pp);p/=m;pp/=m;n--;k--;}}else p=1;return p;}
+ll fact[Max];
+ll ncr_mod(ll n,ll r) {if(n < r || r < 0) return 0;return (((fact[n]*inverse(fact[r], mod))%mod)*inverse(fact[n-r], mod))%mod;}
+void fac() {fact[0] = 1; for(ll i = 1; i < Max; i++) fact[i] = (i*fact[i-1])%mod;}
+
+
+            /********************************* Let's Start *********************************/
+
+
+
+
+void solve() {
+    string s;
+    cin >> s;
+    vector<int> v(3,0);
+    int n = 0,g = 0;
+
+    for(char ch : s) {
+        if(ch == 'A' or ch == 'E' or ch == 'I' or ch == 'O' or ch == 'U') v[0]++;
+        else if(ch == 'Y') v[1]++;
+        else v[2]++;
+        if(ch == 'N') n++;
+        if(ch == 'G') g++;
+    }
+    int res = 0;
+    int p = min(n,g);
+    for(int i = 0; i <= n+g; i++) { // ekta ng koi ta te thakbe
+        for(int j = 0; j <= n+g; j++) { // duita ng koi ta te thakbe
+            int x = v[0],y = v[1],z = v[2];
+            int tot = j*2 + i;
+            if(p < tot) break;
+            int q = 3*i + 4*j;
+            int qq = i+j;
+            int ans = q+qq;
+
+
+            if(x+y >= qq) {
+                int c = min(qq,x);
+                x -= c;
+                qq -= c;
+                y -= qq;
+            } else break;
+
+            if(z+y >= q) {
+                int c = min(q,z);
+                z -= c;
+                q -= c;
+                y -= q;
+            } else break;
+
+            qq = min(z/2,x);
+            ans += qq*3;
+            z -= qq*2;
+            x -= qq;
+            int c = min(z/2,y);
+            ans += c*3;
+            y -= c;
+            z -= c*2;
+
+            if(z == 1 and y) {
+                if(x) {
+                    ans += 3;
+                    y--;
+                    x--;
+                } else if(y >= 2) {
+                    ans += 3;
+                    y -= 2;
+                }
+                z--;
+            }
+
+            c = min(x,y/2);
+            ans += c*3;
+            y -= c*2;
+
+
+            y/=3;
+            ans += 3*y;
+            //cout << ans << nl;
+
+            res = max(res,ans);
+        }
+
+    }
+
+    cout << res << nl;
+}
+
+
+
+int32_t main() {
+    ios_base::sync_with_stdio(0), cin.tie(0);
+    int t = 1;
+
+    //cin >> t;
+
+    while(t--) {
+
+        solve();
+    }
+}
